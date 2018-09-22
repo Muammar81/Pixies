@@ -2,24 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+namespace Junkyard
+{
 
-public class Player_Animation : NetworkBehaviour {
-
-    public Animator playerAnimator;
-
-    private void Update()
+    public class Player_Animation : NetworkBehaviour
     {
-        if (!isLocalPlayer)
-            return;
-        CheckForPlayerInput();
+
+        public Animator playerAnimator;
+
+        private void Update()
+        {
+            if (!isLocalPlayer)
+                return;
+            CheckForPlayerInput();
+        }
+
+        void CheckForPlayerInput()
+        {
+            if (Mathf.Abs(Input.GetAxis("Horizontal")) > 0 ||
+                Mathf.Abs(Input.GetAxis("Vertical")) > 0)
+                playerAnimator.SetBool("Moving", true);
+            else
+                playerAnimator.SetBool("Moving", false);
+        }
     }
 
-    void CheckForPlayerInput()
-    {
-        if (Mathf.Abs(Input.GetAxis("Horizontal")) > 0 ||
-            Mathf.Abs(Input.GetAxis("Vertical")) > 0)
-            playerAnimator.SetBool("Moving", true);
-        else
-            playerAnimator.SetBool("Moving", false);
-    }
 }

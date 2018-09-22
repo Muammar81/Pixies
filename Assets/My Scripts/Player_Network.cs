@@ -4,23 +4,27 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityStandardAssets.Characters.FirstPerson;
 
-public class Player_Network : NetworkBehaviour
+namespace Junkyard
 {
-
-    public GameObject firstPersonCharecter;
-    public GameObject[] charecterModel;
-    public GameObject convasWorld;
-
-    public override void OnStartLocalPlayer()
+    public class Player_Network : NetworkBehaviour
     {
-        GetComponent<FirstPersonController>().enabled = true;
-        firstPersonCharecter.SetActive(true);
 
-        //hide charecter in my game
-        foreach (GameObject go in charecterModel)
-            go.SetActive(false);
+        public GameObject firstPersonCharecter;
+        public GameObject[] charecterModel;
+        public GameObject convasWorld;
 
-        convasWorld.SetActive(false);
+        public override void OnStartLocalPlayer()
+        {
+            GetComponent<FirstPersonController>().enabled = true;
+            firstPersonCharecter.SetActive(true);
 
+            //hide charecter in my game
+            foreach (GameObject go in charecterModel)
+                go.SetActive(false);
+
+            convasWorld.SetActive(false);
+
+        }
     }
+
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+namespace Junkyard
+{
 
     public class Player_Shoot : NetworkBehaviour
     {
@@ -55,3 +57,5 @@ using UnityEngine.Networking;
 
 
 
+
+}

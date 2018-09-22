@@ -4,8 +4,10 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Networking.Match;
 
-
+namespace Junkyard
+{
     public class NetworkManager_Custom : NetworkManager
     {
 
@@ -15,6 +17,9 @@ using UnityEngine.UI;
         public Text ipAddressTextField;
         private Scene currentScene;
         public GameObject[] panelsForUI;
+        private MatchInfo hostInfo;
+        public Text matchRoomNameText;
+
 
         #region Unity Methods
         private void OnEnable()
@@ -128,10 +133,41 @@ using UnityEngine.UI;
             Application.Quit();
         }
 
+        public void OnClickDisableMatchMaker()
+        {
+            NetworkManager.singleton.StopMatchMaker();
+        }
+
+        public void OnClickEnableMatchMaker()
+        {
+            OnClickDisableMatchMaker();
+            SetPort();
+            NetworkManager.singleton.StartMatchMaker();
+        }
+
+        public void OnClickCreateMatch()
+        {
+            NetworkManager.singleton.matchMaker.CreateMatch(matchRoomNameText.text, 4, true, "", "", "", 0, 0, OnInternetCreateMatch);
+        }
+
+        void OnInternetCreateMatch(bool success, string extendedInfo, MatchInfo matchInfo)
+        {
+            if (success)
+            {
+                textConnectionInfo.text = "Create Match Succeeded.";
+                hostInfo = matchInfo;
+                NetworkServer.Listen(hostInfo, NetworkManager.singleton.matchPort);
+                NetworkManager.singleton.StartHost(hostInfo);
+            }
+            else
+            {
+                textConnectionInfo.text = "Create Match Failed.";
+            }
+        }
 
         #endregion
 
     }
-
+}
 
 

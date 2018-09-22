@@ -5,6 +5,8 @@ using UnityEngine.Networking;
 using UnityStandardAssets.Characters.FirstPerson;
 using UnityEngine.UI;
 
+namespace Junkyard
+{
 
 
     public class Player_Health : NetworkBehaviour
@@ -18,18 +20,18 @@ using UnityEngine.UI;
         public GameObject healthBarGo;
         public RectTransform healthBarRect;
         public Text healthText;
-    
+
 
 
         // Use this for initialization
-    void Start()
+        void Start()
         {
             UpdateHealthBar(playerHealth);
         }
 
         void UpdateHealthBar(int pHealth)
         {
-        healthBarRect.sizeDelta = new Vector2(pHealth * 2, healthBarRect.sizeDelta.y);
+            healthBarRect.sizeDelta = new Vector2(pHealth * 2, healthBarRect.sizeDelta.y);
             healthText.text = pHealth.ToString();
         }
 
@@ -122,3 +124,5 @@ using UnityEngine.UI;
 
     }
 
+
+}
