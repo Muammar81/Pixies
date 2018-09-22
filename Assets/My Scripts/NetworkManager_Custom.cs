@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Networking.Match;
+using UnityEngine.Networking.Types;
 
 namespace Junkyard
 {
@@ -19,6 +20,10 @@ namespace Junkyard
         public GameObject[] panelsForUI;
         private MatchInfo hostInfo;
         public Text matchRoomNameText;
+        public Transform contentRoomList;
+        public GameObject roomButtonPrefab;
+        public Text playerNameText;
+        private string playerName;
 
 
         #region Unity Methods
@@ -44,6 +49,21 @@ namespace Junkyard
         #endregion
 
         #region My Methods
+
+        public void OnClickCapturePlayerName()
+        {
+            if (playerNameText.text == string.Empty)
+            {
+                playerName = "Player";
+                PlayerPrefs.SetString("PlayerName", playerName);
+            }
+
+            else
+            {
+                playerName = playerNameText.text;
+                PlayerPrefs.SetString("PlayerName", playerName);
+            }
+        }
 
         void OnMySceneLoaded(Scene scene, LoadSceneMode mode)
         {
@@ -164,6 +184,73 @@ namespace Junkyard
                 textConnectionInfo.text = "Create Match Failed.";
             }
         }
+
+        void ClearContentRoomList()
+        {
+            foreach (Transform child in contentRoomList)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        public void OnClickFindInternetMatch()
+        {
+            ClearContentRoomList();
+            NetworkManager.singleton.matchMaker.ListMatches(0, 10, "", true, 0, 0, OnInternetMatchList);
+        }
+
+        void OnInternetMatchList(bool success, string extendedInfo, List<MatchInfoSnapshot> matches)
+        {
+            if (success)
+            {
+                if (matches.Count != 0)
+                {
+                    foreach (MatchInfoSnapshot matchesAvailable in matches)
+                    {
+                        GameObject rButton = Instantiate(roomButtonPrefab) as GameObject;
+                        rButton.GetComponentInChildren<Text>().text = matchesAvailable.name;
+                        rButton.GetComponent<Button>().onClick.AddListener(delegate
+                        { JoinInternetMatch(matchesAvailable.networkId, "", "", "", 0, 0, OnJoinInternetMatch); });
+                        rButton.GetComponent<Button>().onClick.AddListener(delegate
+                        { ActivatePanel("pnlAttemptingToConnect"); });
+                        rButton.transform.SetParent(contentRoomList, false);
+                    }
+                }
+
+                else
+                {
+                    textConnectionInfo.text = "No matches available.";
+                }
+            }
+
+            else
+            {
+                textConnectionInfo.text = "Couldn't connect to match maker.";
+            }
+
+        }
+
+
+        public void JoinInternetMatch(NetworkID netID,
+    string password, string pubClientAddress, string privClientAddress, int eloScore, int reqDomain, NetworkMatch.DataResponseDelegate<MatchInfo> callback)
+        {
+            NetworkManager.singleton.matchMaker.JoinMatch(netID, password, pubClientAddress, privClientAddress, eloScore, reqDomain, OnJoinInternetMatch);
+        }
+
+
+        void OnJoinInternetMatch(bool success, string extendedInfo, MatchInfo matchInfo)
+        {
+            if (success)
+            {
+                hostInfo = matchInfo;
+                NetworkManager.singleton.StartClient(hostInfo);
+            }
+            else
+            {
+                textConnectionInfo.text = "Join Match Failed";
+            }
+        }
+
 
         #endregion
 
