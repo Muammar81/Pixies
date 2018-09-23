@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Networking.Match;
 using UnityEngine.Networking.Types;
+using UnityEngine.Networking.NetworkSystem;
 
 namespace Junkyard
 {
@@ -26,11 +27,17 @@ namespace Junkyard
         private string playerName;
         public Text mapSelectedText;
         private string mapSelected = "Map 1";
+        private int characterSelected = 0;
+        public Text characterSelectedText;
+        public GameObject[] characterPrefabs;
+        private short playerControllerID = 0;
+
 
 
         #region Unity Methods
         private void OnEnable()
         {
+            RegisterCharacterPrefabs();
             SceneManager.sceneLoaded += OnMySceneLoaded;
         }
 
@@ -53,9 +60,46 @@ namespace Junkyard
         {
 
         }
+
+        public override void OnClientSceneChanged(NetworkConnection conn)
+        {
+            IntegerMessage msg = new IntegerMessage(characterSelected);
+            ClientScene.AddPlayer(conn, playerControllerID, msg);
+        }
+
+        public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId, NetworkReader extraMessageReader)
+        {
+            int id = 0;
+
+            if (extraMessageReader != null)
+            {
+                var i = extraMessageReader.ReadMessage<IntegerMessage>();
+                id = i.value;
+            }
+
+            Transform chosenSpawnPoint = NetworkManager.singleton.startPositions[Random.Range(0, NetworkManager.singleton.startPositions.Count)];
+            GameObject player = Instantiate(characterPrefabs[id], chosenSpawnPoint.position, chosenSpawnPoint.rotation) as GameObject;
+            NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
+        }
+
         #endregion
 
         #region My Methods
+
+        void RegisterCharacterPrefabs()
+        {
+            foreach (GameObject character in characterPrefabs)
+            {
+                ClientScene.RegisterPrefab(character);
+            }
+        }
+
+        public void OnClickSelectCharacter(int charNum)
+        {
+            characterSelected = charNum;
+            characterSelectedText.text = "Character " + charNum + " Selected";
+        }
+
 
         public void OnClickSelectMap(string mapName)
         {

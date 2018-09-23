@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -7211,8 +7211,8 @@ MonoBehaviour:
   mapSelectedText: {fileID: 1601804475}
   characterSelectedText: {fileID: 49272524}
   characterPrefabs:
-  - {fileID: 1319049411095286, guid: bc51c0bd1bd676a488b1cc5b63293dae, type: 2}
-  - {fileID: 1763903470732314, guid: 2514bb41ef3102648b192e00b0c5707b, type: 2}
+  - {fileID: 1944317335431748, guid: fb7c9a67e42ca9f48b220486622db93f, type: 2}
+  - {fileID: 1944317335431748, guid: e4d6e5041127e0947a9872be6ecac410, type: 2}
 --- !u!1 &1476537015
 GameObject:
   m_ObjectHideFlags: 0
