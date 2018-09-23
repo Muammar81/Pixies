@@ -24,6 +24,8 @@ namespace Junkyard
         public GameObject roomButtonPrefab;
         public Text playerNameText;
         private string playerName;
+        public Text mapSelectedText;
+        private string mapSelected = "Map 1";
 
 
         #region Unity Methods
@@ -43,12 +45,28 @@ namespace Junkyard
             if (textConnectionInfo.text != null)
             {
                 textConnectionInfo.text = "Disconnected or timed out.";
-                ActivatePanel("PnlMainMenu");
+                ActivatePanel("pnlMainMenu");
             }
+        }
+
+        public override void OnClientConnect(NetworkConnection conn)
+        {
+
         }
         #endregion
 
         #region My Methods
+
+        public void OnClickSelectMap(string mapName)
+        {
+            mapSelected = mapName;
+            mapSelectedText.text = mapName + " SELECTED";
+        }
+
+        public void LoadMap()
+        {
+            NetworkManager.singleton.ServerChangeScene(mapSelected);
+        }
 
         public void OnClickCapturePlayerName()
         {
@@ -76,7 +94,7 @@ namespace Junkyard
 
             if (currentScene.name == "Menu")
             {
-                ActivatePanel("PnlMainMenu");
+                ActivatePanel("pnlMainMenu");
             }
             else
             {
@@ -125,12 +143,14 @@ namespace Junkyard
         {
             SetPort();
             NetworkManager.singleton.StartHost();
+            LoadMap();
         }
 
         public void OnClickStartServerOnly()
         {
             SetPort();
             NetworkManager.singleton.StartServer();
+            LoadMap();
         }
 
         public void OnClickJoinLANGame()
@@ -178,6 +198,7 @@ namespace Junkyard
                 hostInfo = matchInfo;
                 NetworkServer.Listen(hostInfo, NetworkManager.singleton.matchPort);
                 NetworkManager.singleton.StartHost(hostInfo);
+                LoadMap();
             }
             else
             {
