@@ -165,7 +165,7 @@ namespace Junkyard
 
         void GetIPAddress()
         {
-            ipAddress = ipAddressTextField.text;
+            ipAddress = "localhost";// ipAddressTextField.text;
         }
 
         void SetPort()
